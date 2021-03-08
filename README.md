@@ -1,6 +1,6 @@
 # Donut Blockchain
 
-Developed based [substrate FRAME](https://substrate.dev/)
+Developed based on [substrate FRAME](https://substrate.dev/)
 
 # Build
 
