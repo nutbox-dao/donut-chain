@@ -1204,6 +1204,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "donut-core"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "serde",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "donut-node"
 version = "0.1.0"
 dependencies = [
@@ -1243,6 +1256,7 @@ dependencies = [
 name = "donut-runtime"
 version = "0.1.0"
 dependencies = [
+ "donut-core",
  "frame-benchmarking",
  "frame-executive",
  "frame-support",

@@ -256,6 +256,11 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+impl donut_core::Config for Runtime {
+	type Event = Event;
+	type ReserveCurrency = Balances;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -271,6 +276,7 @@ construct_runtime!(
 		Balances: pallet_balances::{Module, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: pallet_transaction_payment::{Module, Storage},
 		Sudo: pallet_sudo::{Module, Call, Config<T>, Storage, Event<T>},
+		DonutCore: donut_core::{Module, Call, Storage, Event<T>},
 	}
 );
 
