@@ -41,7 +41,7 @@ const main = async () => {
             }
             const unsub = await api.tx.sudo
             .sudo(
-                api.tx.donutCore.issueDonut(donut_account.address, steem_account, new BN(200000000000000), bridge_sig)
+                api.tx.donutCore.sudoIssueDonut(donut_account.address, steem_account, new BN(200000000000000), bridge_sig)
             )
             .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
                 console.log(`Current status is ${result.status}`)
@@ -64,7 +64,7 @@ const main = async () => {
     
             const unsub = await api.tx.sudo
             .sudo(
-                api.tx.donutCore.burnDonut(donut_account.address, steem_account, new BN(100000000000000), bridge_sig)
+                api.tx.donutCore.sudoBurnDonut(donut_account.address, steem_account, new BN(100000000000000), bridge_sig)
             )
             .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
                 console.log(`Current status is ${result.status}`)
