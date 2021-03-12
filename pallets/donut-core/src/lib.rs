@@ -5,7 +5,7 @@ use frame_support::{
 	decl_module, decl_storage, decl_event, decl_error, dispatch, ensure,
 	traits::{ Get, Currency, ExistenceRequirement, WithdrawReasons },
 };
-use frame_system::ensure_root;
+use frame_system::{ ensure_signed, ensure_root };
 
 type BalanceOf<T> =
 	<<T as Config>::ReserveCurrency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
@@ -52,7 +52,7 @@ decl_module! {
 		fn deposit_event() = default;
 
 		#[weight = 10_000]
-		fn issue_donut(origin, donut_account: T::AccountId, steem_account: Vec<u8>, amount: BalanceOf<T>, sig: Vec<u8>) {
+		fn sudo_issue_donut(origin, donut_account: T::AccountId, steem_account: Vec<u8>, amount: BalanceOf<T>, sig: Vec<u8>) {
 			
 			ensure_root(origin)?;
 
@@ -66,7 +66,7 @@ decl_module! {
 		}
 		
 		#[weight = 10_000]
-		fn burn_donut(origin, donut_account: T::AccountId, steem_account: Vec<u8>, amount: BalanceOf<T>, sig: Vec<u8>) {
+		fn sudo_burn_donut(origin, donut_account: T::AccountId, steem_account: Vec<u8>, amount: BalanceOf<T>, sig: Vec<u8>) {
 			
 			ensure_root(origin)?;
 
@@ -86,6 +86,28 @@ decl_module! {
 
             // Emit an event that Dont has been burned
 			Self::deposit_event(RawEvent::DonutBurned(donut_account, steem_account, amount));
+		}
+		
+		/// Dispatch that everyone can burn their DONT to redeem STEEM back
+		#[weight = 10_000]
+		fn burn_donut(origin, steem_account: Vec<u8>, amount: BalanceOf<T>) {
+			
+			let who = ensure_signed(origin)?;
+			
+			// Check balance
+			ensure!(T::ReserveCurrency::free_balance(&who) >= amount, Error::<T>::InsufficientBalance);
+
+			// burn Donut
+			let _ = T::ReserveCurrency::withdraw(
+				&who,
+				amount,
+				WithdrawReasons::TRANSFER,
+				ExistenceRequirement::AllowDeath,
+			)
+			.map_err(|_| Error::<T>::UnknownError)?;
+
+            // Emit an event that Dont has been burned
+			Self::deposit_event(RawEvent::DonutBurned(who, steem_account, amount));
         }
 	}
 }
