@@ -7,6 +7,7 @@ use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::traits::{Verify, IdentifyAccount};
 use sc_service::ChainType;
+use sc_chain_spec::Properties;
 
 // The URL for the telemetry server.
 // const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -71,7 +72,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		// Protocol ID
 		None,
 		// Properties
-		None,
+		testnet_properties(),
 		// Extensions
 		None,
 	))
@@ -119,7 +120,7 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		// Protocol ID
 		None,
 		// Properties
-		None,
+		testnet_properties(),
 		// Extensions
 		None,
 	))
@@ -154,4 +155,14 @@ fn testnet_genesis(
 			key: root_key,
 		}),
 	}
+}
+
+fn testnet_properties() -> Option<Properties> {
+	let mut p = Properties::new();
+
+	p.insert("tokenSymbol".into(), "DNUT".into());
+	p.insert("tokenDecimals".into(), 12.into());
+	p.insert("ss58Format".into(), 1213.into());
+
+	Some(p)
 }
