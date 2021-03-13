@@ -35,47 +35,52 @@ const main = async () => {
 
         const issue_donut = async () => {
             console.log('--- Submitting extrinsic to issue DNUT into donut account: ', donut_account.address, ' ---')
-
-            if (!nonce) {
-                nonce = (await api.query.system.account(sudo_account.address)).nonce;
-            }
-            const unsub = await api.tx.sudo
-            .sudo(
-                api.tx.donutCore.sudoIssueDonut(donut_account.address, steem_account, new BN(200000000000000), bridge_sig)
-            )
-            .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
-                console.log(`Current status is ${result.status}`)
-                if (result.status.isInBlock) {
-                    console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                    console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                    unsub()
+            
+            return new Promise(async (resolve, reject) => {
+                if (!nonce) {
+                    nonce = (await api.query.system.account(sudo_account.address)).nonce.toNumber()
                 }
+                const unsub = await api.tx.sudo
+                .sudo(
+                    api.tx.donutCore.sudoIssueDonut(donut_account.address, steem_account, new BN(200000000000000), bridge_sig)
+                )
+                .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
+                    console.log(`Current status is ${result.status}`)
+                    if (result.status.isInBlock) {
+                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                    } else if (result.status.isFinalized) {
+                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                        unsub()
+                        return resolve(result.status.asFinalized)
+                    }
+                }).catch(err => reject(err))
+                nonce += 1
             })
-            nonce += 1
         }
 
         const burn_donut = async () => {
             console.log('--- Submitting extrinsic to burn DNUT from donut account: ', donut_account.address, ' ---')
 
-            if (!nonce) {
-                nonce = (await api.query.system.account(sudo_account.address)).nonce;
-            }
-    
-            const unsub = await api.tx.sudo
-            .sudo(
-                api.tx.donutCore.sudoBurnDonut(donut_account.address, steem_account, new BN(100000000000000), bridge_sig)
-            )
-            .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
-                console.log(`Current status is ${result.status}`)
-                if (result.status.isInBlock) {
-                    console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                    console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                    unsub()
+            return new Promise(async (resolve, reject) => {
+                if (!nonce) {
+                    nonce = (await api.query.system.account(sudo_account.address)).nonce.toNumber();
                 }
+                const unsub = await api.tx.sudo
+                .sudo(
+                    api.tx.donutCore.sudoBurnDonut(donut_account.address, steem_account, new BN(100000000000000), bridge_sig)
+                )
+                .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
+                    console.log(`Current status is ${result.status}`)
+                    if (result.status.isInBlock) {
+                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                    } else if (result.status.isFinalized) {
+                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                        unsub()
+                        return resolve(result.status.asFinalized)
+                    }
+                }).catch(err => reject(err))
+                nonce += 1
             })
-            nonce += 1
         }
 
         // Subscribe to system events and look up events we care
@@ -124,7 +129,8 @@ const main = async () => {
 
         await issue_donut()
         await burn_donut()
-
+        console.log('--- All transactions has finalized, testing completely! ---')
+        process.exit(0)
     })
 }
 
