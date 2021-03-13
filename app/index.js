@@ -2,7 +2,7 @@ const { ApiPromise, WsProvider, Keyring } = require('@polkadot/api')
 const { cryptoWaitReady } = require('@polkadot/util-crypto')
 const BN = require('bn.js')
 
-const custrom_types = {};
+const custrom_types = {}
 
 const provider = new WsProvider('ws://127.0.0.1:9944')
 const api = new ApiPromise({ provider, types: custrom_types })
@@ -31,7 +31,7 @@ const main = async () => {
         const donut_account = keyring.addFromUri('//Dave')
         const steem_account = '0x' + Buffer.from("steem user").toString('hex')
         const bridge_sig = '0x' + Buffer.from('dummy signature').toString('hex')
-        const bn_decimals = new BN(api.registry.chainDecimals[0]);
+        const bn_decimals = new BN(api.registry.chainDecimals[0])
 
         const issue_donut = async () => {
             console.log('--- Submitting extrinsic to issue DNUT into donut account: ', donut_account.address, ' ---')
@@ -47,9 +47,9 @@ const main = async () => {
                 .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
                     console.log(`Current status is ${result.status}`)
                     if (result.status.isInBlock) {
-                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`)
                     } else if (result.status.isFinalized) {
-                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`)
                         unsub()
                         return resolve(result.status.asFinalized)
                     }
@@ -63,7 +63,7 @@ const main = async () => {
 
             return new Promise(async (resolve, reject) => {
                 if (!nonce) {
-                    nonce = (await api.query.system.account(sudo_account.address)).nonce.toNumber();
+                    nonce = (await api.query.system.account(sudo_account.address)).nonce.toNumber()
                 }
                 const unsub = await api.tx.sudo
                 .sudo(
@@ -72,9 +72,9 @@ const main = async () => {
                 .signAndSend(sudo_account, { nonce: nonce, era: 0 }, (result) => {
                     console.log(`Current status is ${result.status}`)
                     if (result.status.isInBlock) {
-                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                        console.log(`Transaction included at blockHash ${result.status.asInBlock}`)
                     } else if (result.status.isFinalized) {
-                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                        console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`)
                         unsub()
                         return resolve(result.status.asFinalized)
                     }
