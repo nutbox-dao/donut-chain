@@ -160,7 +160,7 @@ fn testnet_genesis(
 fn testnet_properties() -> Option<Properties> {
 	let mut p = Properties::new();
 
-	p.insert("tokenSymbol".into(), "DNUT".into());
+	p.insert("tokenSymbol".into(), "DSTEEM".into());
 	p.insert("tokenDecimals".into(), 12.into());
 	p.insert("ss58Format".into(), 1213.into());
 
